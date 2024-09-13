@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import usePokemonService from "@/hooks/usePokemonService";
+import usePokemonService from "@/hooks/use-pokemon-service";
 import { useEffect, useState } from "react";
 
 export function Pokedex(): React.ReactElement {
