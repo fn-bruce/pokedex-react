@@ -1,11 +1,16 @@
-import { Button } from "@/components/ui/button";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ModeToggle } from "./components/mode-toggle";
 
 function App(): React.ReactElement {
   return (
-    <div className="h-screen w-screen flex flex-col gap-4 justify-center items-center">
-      <h1>Welcome to the Pokedex!</h1>
-      <Button onClick={() => alert("hello!")}>Click me!</Button>
-    </div>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <div className="h-screen w-screen flex flex-col gap-4 justify-center items-center">
+        <div className="absolute right-8 top-8">
+          <ModeToggle />
+        </div>
+        <h1>Welcome to the Pokedex!</h1>
+      </div>
+    </ThemeProvider>
   );
 }
 
