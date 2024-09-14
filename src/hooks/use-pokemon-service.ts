@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useToast } from "./use-toast";
 
 export interface PokemonServiceProps {}
 
@@ -33,11 +32,10 @@ export default function usePokemonService({}: PokemonServiceProps): PokemonServi
       return pokemon;
     } catch (err) {
       setError(err as Error);
+      throw err as Error;
     } finally {
       setLoading(false);
     }
-
-    return null;
   };
 
   return {

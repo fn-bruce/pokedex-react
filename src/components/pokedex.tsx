@@ -17,13 +17,22 @@ export function Pokedex(): React.ReactElement {
   const { toast } = useToast();
 
   useEffect((): void => {
-    getAllPokemon().then((p: Pokemon[] | null): void => {
-      setAllPokemon(p);
-      toast({
-        description: "Successfully fetched all pokemon",
-        duration: 3000,
+    getAllPokemon()
+      .then((p: Pokemon[] | null): void => {
+        setAllPokemon(p);
+        toast({
+          description: "Successfully fetched all pokemon",
+          duration: 3000,
+        });
+      })
+      .catch(() => {
+        toast({
+          title: "Error",
+          description: error?.message,
+          duration: 3000,
+          variant: "destructive",
+        });
       });
-    });
   }, []);
 
   return (
