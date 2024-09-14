@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import usePokemonService from "@/hooks/use-pokemon-service";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle, Search, Shuffle } from "lucide-react";
-import { useState } from "react";
+import { KeyboardEvent, useState } from "react";
 
 export function Pokedex(): React.ReactElement {
   const [pokemon, setPokemon] = useState<Pokemon[] | null>(null);
@@ -44,6 +44,12 @@ export function Pokedex(): React.ReactElement {
     }
   };
 
+  const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <div className="h-screen w-screen flex flex-col gap-4 items-center mt-8">
       <h1 className="text-4xl bold">Pokédex</h1>
@@ -51,6 +57,7 @@ export function Pokedex(): React.ReactElement {
         <Input
           value={searchInput}
           onChange={(e) => setSearchInput(e.currentTarget.value)}
+          onKeyUp={handleKeyUp}
           placeholder="Search for a pokemon..."
         />
         <Button disabled={loading} onClick={handleSearch}>
