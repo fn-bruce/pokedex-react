@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "./components/mode-toggle";
 import { Pokedex } from "./components/pokedex";
+import { Toaster } from "./components/ui/toaster";
 
 function App(): React.ReactElement {
   return (
@@ -9,6 +10,7 @@ function App(): React.ReactElement {
         <ModeToggle />
       </div>
       <Pokedex />
+      <Toaster />
     </ThemeProvider>
   );
 }
