@@ -98,11 +98,15 @@ export function Pokedex(): React.ReactElement {
   };
 
   const handlePrevious = (_e: MouseEvent<HTMLAnchorElement>): void => {
-    setCurrentPage(currentPage - 1);
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
   const handleNext = (_e: MouseEvent<HTMLAnchorElement>): void => {
-    setCurrentPage(currentPage + 1);
+    if (currentPage < Math.ceil(totalCount / PAGE_SIZE)) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   const goToPage = (page: number): void => {
