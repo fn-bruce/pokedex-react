@@ -22,14 +22,15 @@ import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle, Search, Shuffle } from "lucide-react";
 import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
 
+const PAGE_SIZE = 9;
+const SIBLING_COUNT = 1;
+
 export function Pokedex(): React.ReactElement {
   const [pokemon, setPokemon] = useState<Pokemon[] | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchInput, setSearchInput] = useState("");
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(9);
-  const [siblingCount, setSiblingCount] = useState(1);
 
   const { error, loading, getAllPokemon } = usePokemonService({});
 
@@ -37,8 +38,8 @@ export function Pokedex(): React.ReactElement {
   const { paginationRange } = usePagination({
     totalCount,
     currentPage,
-    pageSize,
-    siblingCount,
+    pageSize: PAGE_SIZE,
+    siblingCount: SIBLING_COUNT,
   });
 
   useEffect((): void => {
@@ -143,8 +144,8 @@ export function Pokedex(): React.ReactElement {
       <div className="h-[790px] w-[790px] flex flex-wrap gap-4">
         {pokemon
           ?.slice(
-            (currentPage - 1) * pageSize,
-            (currentPage - 1) * pageSize + pageSize,
+            (currentPage - 1) * PAGE_SIZE,
+            (currentPage - 1) * PAGE_SIZE + PAGE_SIZE,
           )
           .map(
             (p: Pokemon, index: number): React.ReactElement => (
