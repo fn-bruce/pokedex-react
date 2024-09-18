@@ -106,7 +106,7 @@ export function Pokedex(): React.ReactElement {
           <LoaderCircle className="animate-spin w-36 h-36" />
         </div>
       )}
-      <div className="h-[790px] w-[790px] flex flex-wrap justify-center items-center gap-4">
+      <div className="h-[790px] w-[790px] flex flex-wrap gap-4">
         {pokemon?.slice(offset * length, offset * length + length).map(
           (p: Pokemon, index: number): React.ReactElement => (
             <Card
