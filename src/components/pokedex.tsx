@@ -12,9 +12,9 @@ import usePokemonService from "@/hooks/use-pokemon-service";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle } from "lucide-react";
 import { MouseEvent, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Results from "./results";
 import Search from "./search";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const PAGE_SIZE = 9;
 const SIBLING_COUNT = 1;
@@ -42,6 +42,10 @@ export function Pokedex(): React.ReactElement {
   useEffect((): void => {
     inputRef.current?.focus();
     search();
+    const page = queryParams.get("page") as number | null;
+    if (page) {
+      setCurrentPage(+page);
+    }
   }, []);
 
   const search = async (): Promise<void> => {
@@ -71,18 +75,17 @@ export function Pokedex(): React.ReactElement {
         duration: 3000,
         variant: "destructive",
       });
-    } finally {
-      setCurrentPage(1);
     }
   };
 
   const handleSearch = async (): Promise<void> => {
+    search();
     queryParams.set("query", query);
+    queryParams.set("page", "1");
     navigate({
       pathname: location.pathname,
       search: queryParams.toString(),
     });
-    search();
   };
 
   const handleShuffle = async (): Promise<void> => {
@@ -115,17 +118,32 @@ export function Pokedex(): React.ReactElement {
   const handlePrevious = (_e: MouseEvent<HTMLAnchorElement>): void => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
+      queryParams.set("page", `${currentPage - 1}`);
+      navigate({
+        pathname: location.pathname,
+        search: queryParams.toString(),
+      });
     }
   };
 
   const handleNext = (_e: MouseEvent<HTMLAnchorElement>): void => {
     if (currentPage < Math.ceil(totalCount / PAGE_SIZE)) {
       setCurrentPage(currentPage + 1);
+      queryParams.set("page", `${currentPage + 1}`);
+      navigate({
+        pathname: location.pathname,
+        search: queryParams.toString(),
+      });
     }
   };
 
   const goToPage = (page: number): void => {
     setCurrentPage(page);
+    queryParams.set("page", `${page}`);
+    navigate({
+      pathname: location.pathname,
+      search: queryParams.toString(),
+    });
   };
 
   return (
