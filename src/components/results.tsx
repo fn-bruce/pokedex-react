@@ -13,7 +13,8 @@ const Results = ({
 }: ResultsProps): React.ReactElement => {
   return (
     <div className="h-[790px] ">
-      <div className="w-[790px] flex flex-wrap gap-4">
+      <div className="h-full w-[790px] flex flex-wrap gap-4 justify-center items-center">
+        {pokemon && pokemon.length === 0 && <div>No results</div>}
         {pokemon
           ?.slice(
             (currentPage - 1) * pageSize,
