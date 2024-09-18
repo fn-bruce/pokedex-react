@@ -17,7 +17,7 @@ export default function usePokemonService({}: PokemonServiceProps): PokemonServi
     setLoading(true);
     try {
       if (allPokemon) return allPokemon;
-      const url = "https://pokeapi.co/ai/v2/pokemon?limit=10000&offset=0";
+      const url = "https://pokeapi.co/api/v2/pokemon?limit=10000&offset=0";
       const response: GetAllPokemon.Response = await (await fetch(url)).json();
       const fetchedPokemon: Pokemon[] = response.results.map((r) => {
         const name = r.name;
