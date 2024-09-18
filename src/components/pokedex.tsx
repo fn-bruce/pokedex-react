@@ -20,6 +20,7 @@ import usePokemonService from "@/hooks/use-pokemon-service";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle, Search, Shuffle } from "lucide-react";
 import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
+import pokeball from "../assets/pokeball.png";
 
 export function Pokedex(): React.ReactElement {
   const [pokemon, setPokemon] = useState<Pokemon[] | null>(null);
@@ -105,12 +106,12 @@ export function Pokedex(): React.ReactElement {
           <LoaderCircle className="animate-spin w-36 h-36" />
         </div>
       )}
-      <div className="flex flex-wrap justify-center items-center p-4 gap-4">
+      <div className="h-[790px] w-[790px] flex flex-wrap justify-center items-center gap-4">
         {pokemon?.slice(offset * length, offset * length + length).map(
           (p: Pokemon, index: number): React.ReactElement => (
             <Card
               key={index}
-              className="w-1/4 h-1/4 flex flex-col items-center"
+              className="w-[250px] h-[250px] flex flex-col items-center"
             >
               <CardHeader>
                 <CardTitle>{p.name}</CardTitle>
@@ -133,9 +134,6 @@ export function Pokedex(): React.ReactElement {
                 className="hover:cursor-pointer select-none"
                 onClick={handlePrevious}
               />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
             </PaginationItem>
             {offset - 1 >= 0 && (
               <PaginationItem>
@@ -165,9 +163,6 @@ export function Pokedex(): React.ReactElement {
                 </PaginationLink>
               </PaginationItem>
             )}
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
             <PaginationItem>
               <PaginationNext
                 className="hover:cursor-pointer select-none"
