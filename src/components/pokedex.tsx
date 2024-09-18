@@ -61,6 +61,28 @@ export function Pokedex(): React.ReactElement {
     }
   };
 
+  const handleShuffle = async (): Promise<void> => {
+    try {
+      const allPokemon = await getAllPokemon();
+      if (!allPokemon) return;
+      const randomIndex = Math.floor(Math.random() * allPokemon.length);
+      setPokemon([allPokemon[randomIndex]]);
+      toast({
+        description: `Randomized Pokémon`,
+        duration: 3000,
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: error?.message,
+        duration: 3000,
+        variant: "destructive",
+      });
+    } finally {
+      setOffset(0);
+    }
+  };
+
   const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSearch();
@@ -97,7 +119,7 @@ export function Pokedex(): React.ReactElement {
         <Button disabled={loading} onClick={handleSearch}>
           <Search />
         </Button>
-        <Button disabled={loading}>
+        <Button disabled={loading} onClick={handleShuffle}>
           <Shuffle />
         </Button>
       </div>
