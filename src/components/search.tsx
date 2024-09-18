@@ -1,7 +1,7 @@
 import { Search as SearchIcon, Shuffle } from "lucide-react";
+import { ChangeEvent, KeyboardEvent, useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useState, KeyboardEvent, ChangeEvent } from "react";
 
 interface SearchProps {
   ref: React.RefObject<HTMLInputElement>;
