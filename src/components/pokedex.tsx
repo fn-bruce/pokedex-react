@@ -1,12 +1,3 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -19,10 +10,10 @@ import {
 import { DOTS, usePagination } from "@/hooks/use-pagination";
 import usePokemonService from "@/hooks/use-pokemon-service";
 import { useToast } from "@/hooks/use-toast";
-import { LoaderCircle, Search, Shuffle } from "lucide-react";
-import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import Item from "./item";
+import { LoaderCircle } from "lucide-react";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import Results from "./results";
+import Search from "./search";
 
 const PAGE_SIZE = 9;
 const SIBLING_COUNT = 1;
@@ -102,10 +93,8 @@ export function Pokedex(): React.ReactElement {
     }
   };
 
-  const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
+  const handleChange = (newValue: string) => {
+    setSearchInput(newValue);
   };
 
   const handlePrevious = (_e: MouseEvent<HTMLAnchorElement>): void => {
@@ -123,21 +112,13 @@ export function Pokedex(): React.ReactElement {
   return (
     <div className="h-full flex flex-col gap-4 items-center py-8">
       <h1 className="text-4xl bold">Pokédex</h1>
-      <div className="flex gap-4">
-        <Input
-          ref={inputRef}
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.currentTarget.value)}
-          onKeyUp={handleKeyUp}
-          placeholder="Search for a pokemon..."
-        />
-        <Button disabled={loading} onClick={handleSearch}>
-          <Search />
-        </Button>
-        <Button disabled={loading} onClick={handleShuffle}>
-          <Shuffle />
-        </Button>
-      </div>
+      <Search
+        ref={inputRef}
+        loading={loading}
+        onChange={handleChange}
+        onSearch={handleSearch}
+        onShuffle={handleShuffle}
+      />
       {loading && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <LoaderCircle className="animate-spin w-36 h-36" />
