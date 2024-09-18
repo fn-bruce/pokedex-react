@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle, Search, Shuffle } from "lucide-react";
 import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
 import Item from "./item";
+import Results from "./results";
 
 const PAGE_SIZE = 9;
 const SIBLING_COUNT = 1;
@@ -142,18 +143,11 @@ export function Pokedex(): React.ReactElement {
           <LoaderCircle className="animate-spin w-36 h-36" />
         </div>
       )}
-      <div className="h-[790px] w-[790px] flex flex-wrap gap-4">
-        {pokemon
-          ?.slice(
-            (currentPage - 1) * PAGE_SIZE,
-            (currentPage - 1) * PAGE_SIZE + PAGE_SIZE,
-          )
-          .map(
-            (p: Pokemon, i: number): React.ReactElement => (
-              <Item key={i} id={p.id} name={p.name} spriteUrl={p.spriteUrl} />
-            ),
-          )}
-      </div>
+      <Results
+        pokemon={pokemon}
+        currentPage={currentPage}
+        pageSize={PAGE_SIZE}
+      />
       {pokemon && (
         <Pagination>
           <PaginationContent>
