@@ -14,19 +14,23 @@ import { LoaderCircle } from "lucide-react";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import Results from "./results";
 import Search from "./search";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const PAGE_SIZE = 9;
 const SIBLING_COUNT = 1;
 
 export function Pokedex(): React.ReactElement {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
   const [pokemon, setPokemon] = useState<Pokemon[] | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [searchInput, setSearchInput] = useState("");
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [query, setQuery] = useState(queryParams.get("query") ?? "");
 
   const { error, loading, getAllPokemon } = usePokemonService({});
-
   const { toast } = useToast();
   const { paginationRange } = usePagination({
     totalCount,
@@ -37,14 +41,15 @@ export function Pokedex(): React.ReactElement {
 
   useEffect((): void => {
     inputRef.current?.focus();
+    search();
   }, []);
 
-  const handleSearch = async (): Promise<void> => {
+  const search = async (): Promise<void> => {
     try {
       const allPokemon = await getAllPokemon();
       const filteredPokemon =
         allPokemon?.filter((p: Pokemon): boolean => {
-          return p.name.includes(searchInput);
+          return p.name.includes(query);
         }) ?? null;
       if (!filteredPokemon) {
         setPokemon(null);
@@ -71,6 +76,15 @@ export function Pokedex(): React.ReactElement {
     }
   };
 
+  const handleSearch = async (): Promise<void> => {
+    queryParams.set("query", query);
+    navigate({
+      pathname: location.pathname,
+      search: queryParams.toString(),
+    });
+    search();
+  };
+
   const handleShuffle = async (): Promise<void> => {
     try {
       const allPokemon = await getAllPokemon();
@@ -95,7 +109,7 @@ export function Pokedex(): React.ReactElement {
   };
 
   const handleChange = (newValue: string) => {
-    setSearchInput(newValue);
+    setQuery(newValue);
   };
 
   const handlePrevious = (_e: MouseEvent<HTMLAnchorElement>): void => {
