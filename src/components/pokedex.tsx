@@ -7,14 +7,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import usePokemonService from "@/hooks/use-pokemon-service";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle, Search, Shuffle } from "lucide-react";
-import { KeyboardEvent, useState } from "react";
+import { KeyboardEvent, MouseEvent, useState } from "react";
 
 export function Pokedex(): React.ReactElement {
   const [pokemon, setPokemon] = useState<Pokemon[] | null>(null);
   const [searchInput, setSearchInput] = useState("");
+  const [offset, setOffset] = useState(0);
+  const [length, setLength] = useState(9);
 
   const { error, loading, getAllPokemon } = usePokemonService({});
 
@@ -23,12 +34,10 @@ export function Pokedex(): React.ReactElement {
   const handleSearch = async (): Promise<void> => {
     try {
       const allPokemon = await getAllPokemon();
-      console.log(searchInput);
       const filteredPokemon =
         allPokemon?.filter((p: Pokemon): boolean => {
           return p.name.includes(searchInput);
         }) ?? null;
-      console.log(filteredPokemon);
       setPokemon(filteredPokemon);
       toast({
         description: `Found ${filteredPokemon?.length} Pokémon`,
@@ -41,6 +50,8 @@ export function Pokedex(): React.ReactElement {
         duration: 3000,
         variant: "destructive",
       });
+    } finally {
+      setOffset(0);
     }
   };
 
@@ -48,6 +59,22 @@ export function Pokedex(): React.ReactElement {
     if (e.key === "Enter") {
       handleSearch();
     }
+  };
+
+  const handlePrevious = (_e: MouseEvent<HTMLAnchorElement>): void => {
+    if (offset - 1 >= 0) {
+      setOffset(offset - 1);
+    }
+  };
+
+  const handleNext = (_e: MouseEvent<HTMLAnchorElement>): void => {
+    if (pokemon && offset + 1 < pokemon.length / length) {
+      setOffset(offset + 1);
+    }
+  };
+
+  const goToPage = (page: number): void => {
+    setOffset(page);
   };
 
   return (
@@ -72,10 +99,13 @@ export function Pokedex(): React.ReactElement {
           <LoaderCircle className="animate-spin w-36 h-36" />
         </div>
       )}
-      <div className="flex flex-wrap w-full gap-4 justify-center">
-        {pokemon?.map(
+      <div className="flex flex-wrap justify-center items-center p-4 gap-4">
+        {pokemon?.slice(offset * length, offset * length + length).map(
           (p: Pokemon, index: number): React.ReactElement => (
-            <Card key={index} className="w-1/4 flex flex-col items-center">
+            <Card
+              key={index}
+              className="w-1/4 h-1/4 flex flex-col items-center"
+            >
               <CardHeader>
                 <CardTitle>{p.name}</CardTitle>
                 <CardDescription className="text-center">
@@ -89,6 +119,58 @@ export function Pokedex(): React.ReactElement {
           ),
         )}
       </div>
+      {pokemon && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                className="hover:cursor-pointer select-none"
+                onClick={handlePrevious}
+              />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            {offset - 1 >= 0 && (
+              <PaginationItem>
+                <PaginationLink
+                  className="hover:cursor-pointer select-none"
+                  onClick={() => goToPage(offset - 1)}
+                >
+                  {offset}
+                </PaginationLink>
+              </PaginationItem>
+            )}
+            <PaginationItem>
+              <PaginationLink
+                className="hover:cursor-pointer select-none"
+                isActive
+              >
+                {offset + 1}
+              </PaginationLink>
+            </PaginationItem>
+            {pokemon && offset + 1 < pokemon.length / length && (
+              <PaginationItem>
+                <PaginationLink
+                  className="hover:cursor-pointer select-none"
+                  onClick={() => goToPage(offset + 1)}
+                >
+                  {offset + 2}
+                </PaginationLink>
+              </PaginationItem>
+            )}
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                className="hover:cursor-pointer select-none"
+                onClick={handleNext}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }
