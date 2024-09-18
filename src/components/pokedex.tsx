@@ -16,22 +16,30 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { DOTS, usePagination } from "@/hooks/use-pagination";
 import usePokemonService from "@/hooks/use-pokemon-service";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle, Search, Shuffle } from "lucide-react";
 import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import pokeball from "../assets/pokeball.png";
 
 export function Pokedex(): React.ReactElement {
   const [pokemon, setPokemon] = useState<Pokemon[] | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchInput, setSearchInput] = useState("");
-  const [offset, setOffset] = useState(0);
-  const [length, setLength] = useState(9);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(9);
+  const [siblingCount, setSiblingCount] = useState(1);
 
   const { error, loading, getAllPokemon } = usePokemonService({});
 
   const { toast } = useToast();
+  const { paginationRange } = usePagination({
+    totalCount,
+    currentPage,
+    pageSize,
+    siblingCount,
+  });
 
   useEffect((): void => {
     inputRef.current?.focus();
@@ -44,7 +52,14 @@ export function Pokedex(): React.ReactElement {
         allPokemon?.filter((p: Pokemon): boolean => {
           return p.name.includes(searchInput);
         }) ?? null;
-      setPokemon(filteredPokemon);
+      if (!filteredPokemon) {
+        setPokemon(null);
+        setTotalCount(0);
+      } else {
+        setPokemon(filteredPokemon);
+        setTotalCount(filteredPokemon.length);
+      }
+
       toast({
         description: `Found ${filteredPokemon?.length} Pokémon`,
         duration: 3000,
@@ -57,7 +72,7 @@ export function Pokedex(): React.ReactElement {
         variant: "destructive",
       });
     } finally {
-      setOffset(0);
+      setCurrentPage(1);
     }
   };
 
@@ -79,7 +94,8 @@ export function Pokedex(): React.ReactElement {
         variant: "destructive",
       });
     } finally {
-      setOffset(0);
+      setCurrentPage(1);
+      setTotalCount(1);
     }
   };
 
@@ -90,19 +106,15 @@ export function Pokedex(): React.ReactElement {
   };
 
   const handlePrevious = (_e: MouseEvent<HTMLAnchorElement>): void => {
-    if (offset - 1 >= 0) {
-      setOffset(offset - 1);
-    }
+    setCurrentPage(currentPage - 1);
   };
 
   const handleNext = (_e: MouseEvent<HTMLAnchorElement>): void => {
-    if (pokemon && offset + 1 < pokemon.length / length) {
-      setOffset(offset + 1);
-    }
+    setCurrentPage(currentPage + 1);
   };
 
   const goToPage = (page: number): void => {
-    setOffset(page);
+    setCurrentPage(page);
   };
 
   return (
@@ -129,24 +141,29 @@ export function Pokedex(): React.ReactElement {
         </div>
       )}
       <div className="h-[790px] w-[790px] flex flex-wrap gap-4">
-        {pokemon?.slice(offset * length, offset * length + length).map(
-          (p: Pokemon, index: number): React.ReactElement => (
-            <Card
-              key={index}
-              className="w-[250px] h-[250px] flex flex-col items-center"
-            >
-              <CardHeader>
-                <CardTitle>{p.name}</CardTitle>
-                <CardDescription className="text-center">
-                  #{p.id}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <img src={p.spriteUrl} alt={p.name} />
-              </CardContent>
-            </Card>
-          ),
-        )}
+        {pokemon
+          ?.slice(
+            (currentPage - 1) * pageSize,
+            (currentPage - 1) * pageSize + pageSize,
+          )
+          .map(
+            (p: Pokemon, index: number): React.ReactElement => (
+              <Card
+                key={index}
+                className="w-[250px] h-[250px] flex flex-col items-center"
+              >
+                <CardHeader>
+                  <CardTitle>{p.name}</CardTitle>
+                  <CardDescription className="text-center">
+                    #{p.id}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <img src={p.spriteUrl} alt={p.name} />
+                </CardContent>
+              </Card>
+            ),
+          )}
       </div>
       {pokemon && (
         <Pagination>
@@ -157,34 +174,27 @@ export function Pokedex(): React.ReactElement {
                 onClick={handlePrevious}
               />
             </PaginationItem>
-            {offset - 1 >= 0 && (
-              <PaginationItem>
-                <PaginationLink
-                  className="hover:cursor-pointer select-none"
-                  onClick={() => goToPage(offset - 1)}
-                >
-                  {offset}
-                </PaginationLink>
-              </PaginationItem>
-            )}
-            <PaginationItem>
-              <PaginationLink
-                className="hover:cursor-pointer select-none"
-                isActive
-              >
-                {offset + 1}
-              </PaginationLink>
-            </PaginationItem>
-            {pokemon && offset + 1 < pokemon.length / length && (
-              <PaginationItem>
-                <PaginationLink
-                  className="hover:cursor-pointer select-none"
-                  onClick={() => goToPage(offset + 1)}
-                >
-                  {offset + 2}
-                </PaginationLink>
-              </PaginationItem>
-            )}
+            {paginationRange.map((page, i) => {
+              if (page === DOTS) {
+                return (
+                  <PaginationItem key={i}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                );
+              }
+
+              return (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    className="hover:cursor-pointer select-none"
+                    onClick={() => goToPage(page)}
+                    isActive={page === currentPage}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              );
+            })}
             <PaginationItem>
               <PaginationNext
                 className="hover:cursor-pointer select-none"
