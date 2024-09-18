@@ -55,13 +55,14 @@ export function Pokedex(): React.ReactElement {
       }
 
       toast({
+        title: "Success",
         description: `Found ${filteredPokemon?.length} Pokémon`,
         duration: 3000,
       });
-    } catch {
+    } catch (err) {
       toast({
         title: "Error",
-        description: error?.message,
+        description: (err as Error).message,
         duration: 3000,
         variant: "destructive",
       });
@@ -133,7 +134,7 @@ export function Pokedex(): React.ReactElement {
         currentPage={currentPage}
         pageSize={PAGE_SIZE}
       />
-      {pokemon && (
+      {pokemon && pokemon.length !== 0 && (
         <Pagination>
           <PaginationContent>
             <PaginationItem>
