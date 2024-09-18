@@ -21,6 +21,7 @@ import usePokemonService from "@/hooks/use-pokemon-service";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle, Search, Shuffle } from "lucide-react";
 import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
+import Item from "./item";
 
 const PAGE_SIZE = 9;
 const SIBLING_COUNT = 1;
@@ -148,21 +149,8 @@ export function Pokedex(): React.ReactElement {
             (currentPage - 1) * PAGE_SIZE + PAGE_SIZE,
           )
           .map(
-            (p: Pokemon, index: number): React.ReactElement => (
-              <Card
-                key={index}
-                className="w-[250px] h-[250px] flex flex-col items-center"
-              >
-                <CardHeader>
-                  <CardTitle>{p.name}</CardTitle>
-                  <CardDescription className="text-center">
-                    #{p.id}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <img src={p.spriteUrl} alt={p.name} />
-                </CardContent>
-              </Card>
+            (p: Pokemon, i: number): React.ReactElement => (
+              <Item key={i} id={p.id} name={p.name} spriteUrl={p.spriteUrl} />
             ),
           )}
       </div>
