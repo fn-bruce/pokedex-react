@@ -42,6 +42,7 @@ export function Pokedex(): React.ReactElement {
   useEffect((): void => {
     inputRef.current?.focus();
     search();
+
     const page = queryParams.get("page") as number | null;
     if (page) {
       setCurrentPage(+page);
@@ -82,6 +83,7 @@ export function Pokedex(): React.ReactElement {
     search();
     queryParams.set("query", query);
     queryParams.set("page", "1");
+    setCurrentPage(1);
     navigate({
       pathname: location.pathname,
       search: queryParams.toString(),
