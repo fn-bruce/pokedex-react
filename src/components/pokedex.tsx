@@ -19,10 +19,11 @@ import {
 import usePokemonService from "@/hooks/use-pokemon-service";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle, Search, Shuffle } from "lucide-react";
-import { KeyboardEvent, MouseEvent, useState } from "react";
+import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
 
 export function Pokedex(): React.ReactElement {
   const [pokemon, setPokemon] = useState<Pokemon[] | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [searchInput, setSearchInput] = useState("");
   const [offset, setOffset] = useState(0);
   const [length, setLength] = useState(9);
@@ -30,6 +31,10 @@ export function Pokedex(): React.ReactElement {
   const { error, loading, getAllPokemon } = usePokemonService({});
 
   const { toast } = useToast();
+
+  useEffect((): void => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleSearch = async (): Promise<void> => {
     try {
@@ -82,6 +87,7 @@ export function Pokedex(): React.ReactElement {
       <h1 className="text-4xl bold">Pokédex</h1>
       <div className="flex gap-4">
         <Input
+          ref={inputRef}
           value={searchInput}
           onChange={(e) => setSearchInput(e.currentTarget.value)}
           onKeyUp={handleKeyUp}
