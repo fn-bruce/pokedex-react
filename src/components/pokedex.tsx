@@ -51,7 +51,7 @@ export function Pokedex(): React.ReactElement {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col gap-4 items-center mt-8">
+    <div className="h-full flex flex-col gap-4 items-center py-8">
       <h1 className="text-4xl bold">Pokédex</h1>
       <div className="flex gap-4">
         <Input
@@ -72,7 +72,7 @@ export function Pokedex(): React.ReactElement {
           <LoaderCircle className="animate-spin w-36 h-36" />
         </div>
       )}
-      <div className="flex flex-wrap w-full gap-4 m-4 justify-center">
+      <div className="flex flex-wrap w-full gap-4 justify-center">
         {pokemon?.map(
           (p: Pokemon, index: number): React.ReactElement => (
             <Card key={index} className="w-1/4 flex flex-col items-center">
