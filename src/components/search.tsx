@@ -1,9 +1,10 @@
 import { Search as SearchIcon, Shuffle } from "lucide-react";
-import { ChangeEvent, KeyboardEvent, useState, forwardRef } from "react";
+import { ChangeEvent, ForwardedRef, forwardRef, KeyboardEvent } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 interface SearchProps {
+  query: string;
   loading: boolean;
   onChange: (newValue: string) => void;
   onSearch: () => Promise<void>;
@@ -11,9 +12,10 @@ interface SearchProps {
 }
 
 const Search = forwardRef<HTMLInputElement, SearchProps>(
-  ({ loading, onChange, onSearch, onShuffle }, ref): React.ReactElement => {
-    const [input, setInput] = useState("");
-
+  (
+    { query, loading, onChange, onSearch, onShuffle }: SearchProps,
+    ref: ForwardedRef<HTMLInputElement>,
+  ): React.ReactElement => {
     const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>): void => {
       if (e.key === "Enter") {
         onSearch();
@@ -21,7 +23,6 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
     };
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>): void => {
-      setInput(e.currentTarget.value);
       onChange(e.currentTarget.value);
     };
 
@@ -29,7 +30,7 @@ const Search = forwardRef<HTMLInputElement, SearchProps>(
       <div className="flex gap-4">
         <Input
           ref={ref}
-          value={input}
+          value={query}
           onChange={handleOnChange}
           onKeyUp={handleKeyUp}
           placeholder="Search for a pokemon..."

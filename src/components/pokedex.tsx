@@ -96,6 +96,12 @@ export function Pokedex(): React.ReactElement {
       if (!allPokemon) return;
       const randomIndex = Math.floor(Math.random() * allPokemon.length);
       setPokemon([allPokemon[randomIndex]]);
+      setCurrentPage(1);
+      queryParams.set("page", "1");
+      navigate({
+        pathname: location.pathname,
+        search: queryParams.toString(),
+      });
       toast({
         description: `Randomized Pokémon`,
         duration: 3000,
@@ -115,6 +121,11 @@ export function Pokedex(): React.ReactElement {
 
   const handleChange = (newValue: string) => {
     setQuery(newValue);
+    queryParams.set("query", newValue);
+    navigate({
+      pathname: location.pathname,
+      search: queryParams.toString(),
+    });
   };
 
   const handlePrevious = (_e: MouseEvent<HTMLAnchorElement>): void => {
@@ -153,6 +164,7 @@ export function Pokedex(): React.ReactElement {
       <h1 className="text-4xl bold">Pokédex</h1>
       <Search
         ref={inputRef}
+        query={query}
         loading={loading}
         onChange={handleChange}
         onSearch={handleSearch}
